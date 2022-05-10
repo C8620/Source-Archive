@@ -36,10 +36,10 @@
 
 	date_default_timezone_set('UTC');
 	
-	$servername = "localhost";
-	$username = "u135329933_gcgsrc";
-	$password = "8I4~Vy/v9B";
-	$dbname = "u135329933_gcgsrc";
+	$servername = "";
+	$username = "";
+	$password = "";
+	$dbname = "";
 	
 	$conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection establishment.
