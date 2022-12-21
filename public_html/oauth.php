@@ -23,19 +23,19 @@ if ($_GET['error']) {
 $sessionData = $modDB->QuerySingle('SELECT * FROM tblAuthSessions WHERE txtSessionKey=\'' . $modDB->Escape($_SESSION['sessionkey']) . '\'');
 
 if ($sessionData) {
-    // Request token from Azure AD
+	// Request token from Azure AD
 	$oauthRequest = $oAuth->generateRequest('grant_type=authorization_code&client_id=' . _OAUTH_CLIENTID . '&redirect_uri=' . urlencode(_URL . '/oauth.php') . '&code=' . $_GET['code'] . '&code_verifier=' . $sessionData['txtCodeVerifier']);
 
 	$response = $oAuth->postRequest('token', $oauthRequest);
 
 	// Decode response from Azure AD. Extract JWT data from supplied access_token and id_token and update database.
-	if (!$response) { 
+	if (!$response) {
 		echo $oAuth->errorMessage('Unknown error acquiring token');
 		exit;
 	}
 	$reply = json_decode($response);
 	if ($reply->error) {
-	        echo $oAuth->errorMessage($reply->error_description);
+		echo $oAuth->errorMessage($reply->error_description);
 		exit;
 	}
 
@@ -46,4 +46,3 @@ if ($sessionData) {
 } else {
 	header('Location: /');
 }
-?>

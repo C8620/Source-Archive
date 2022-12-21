@@ -122,4 +122,3 @@ class modDB {
         return mysqli_error($this->myDB);
     }
 }
-?>

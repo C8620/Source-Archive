@@ -12,7 +12,8 @@
 require_once dirname(__FILE__) . '/mysql.php';
 require_once dirname(__FILE__) . '/oauth.php';
 
-class modAuth {
+class modAuth
+{
     var $modDB;
     var $Token;
     var $userData;
@@ -24,12 +25,13 @@ class modAuth {
     var $isLoggedIn;
     var $oAuth;
 
-    function __construct($allowAnonymous = '1') {
+    function __construct($allowAnonymous = '1')
+    {
         $this->modDB = new modDB();
-	$this->oAuth = new modOAuth();
+        $this->oAuth = new modOAuth();
         session_start();
-        setcookie(session_name(),session_id(), 2147483647);
-        
+        setcookie(session_name(), session_id(), 2147483647);
+
         $url = _URL . $_SERVER['REQUEST_URI'];
 
         // check session key against database. If it's expired or doesnt exist then forward to Azure AD
@@ -56,40 +58,40 @@ class modAuth {
             if (strtotime($res['dtExpires']) < strtotime('+10 minutes')) {
                 //attempt token refresh
                 if ($res['txtRefreshToken']) {
-    	            $oauthRequest = $this->oAuth->generateRequest('grant_type=refresh_token&refresh_token=' . $res['txtRefreshToken'] . '&client_id=' . _OAUTH_CLIENTID . '&scope=' . _OAUTH_SCOPE);
-	            $response = $this->oAuth->postRequest('token', $oauthRequest);
+                    $oauthRequest = $this->oAuth->generateRequest('grant_type=refresh_token&refresh_token=' . $res['txtRefreshToken'] . '&client_id=' . _OAUTH_CLIENTID . '&scope=' . _OAUTH_SCOPE);
+                    $response = $this->oAuth->postRequest('token', $oauthRequest);
                     $reply = json_decode($response);
                     if ($reply->error) {
-                        if(substr($reply->error_description, 0, 12) == 'AADSTS70008:') {
+                        if (substr($reply->error_description, 0, 12) == 'AADSTS70008:') {
                             //refresh token expired
                             $this->modDB->Update('tblAuthSessions', array('txtRedir' => $url, 'txtRefreshToken' => '', 'dtExpires' => date('Y-m-d H:i:s', strtotime('+5 minutes'))),  array('intAuthID' => $res['intAuthID']));
                             $oAuthURL = 'https://login.microsoftonline.com/' . _OAUTH_TENANTID . '/oauth2/v2.0/' . 'authorize?response_type=code&client_id=' . _OAUTH_CLIENTID . '&redirect_uri=' . urlencode(_URL . '/oauth.php') . '&scope=' . _OAUTH_SCOPE . '&code_challenge=' . $this->oAuthChallenge . '&code_challenge_method=' . $this->oAuthChallengeMethod;
                             header('Location: ' . $oAuthURL);
                             exit;
                         }
-			echo $this->oAuth->errorMessage($reply->error_description);
-			exit;
+                        echo $this->oAuth->errorMessage($reply->error_description);
+                        exit;
                     }
-		    $idToken = base64_decode(explode('.', $reply->id_token)[1]);
-		    $this->modDB->Update('tblAuthSessions', array('txtToken' => $reply->access_token, 'txtRefreshToken' => $reply->refresh_token, 'txtIDToken' => $idToken, 'txtRedir' => '', 'dtExpires' => date('Y-m-d H:i:s', strtotime('+' . $reply->expires_in . ' seconds'))), array('intAuthID' => $res['intAuthID']));
-    		    $res['txtToken'] = $reply->access_token;
+                    $idToken = base64_decode(explode('.', $reply->id_token)[1]);
+                    $this->modDB->Update('tblAuthSessions', array('txtToken' => $reply->access_token, 'txtRefreshToken' => $reply->refresh_token, 'txtIDToken' => $idToken, 'txtRedir' => '', 'dtExpires' => date('Y-m-d H:i:s', strtotime('+' . $reply->expires_in . ' seconds'))), array('intAuthID' => $res['intAuthID']));
+                    $res['txtToken'] = $reply->access_token;
                 }
             }
             //Populate userData and userName from the JWT stored in the database.
             $this->Token = $res['txtToken'];
-	    if ($res['txtIDToken']) {
-		$idToken = json_decode($res['txtIDToken']);
-		$this->userName = $idToken->preferred_username;
-		$this->userRoles = $idToken->roles;
-		if (!$idToken->roles) {
-			$this->userRoles = array('Default Access');
-		}
-	    }
-	    $this->isLoggedIn = 1;
-        $_SESSION['freepv'] = -1;
+            if ($res['txtIDToken']) {
+                $idToken = json_decode($res['txtIDToken']);
+                $this->userName = $idToken->preferred_username;
+                $this->userRoles = $idToken->roles;
+                if (!$idToken->roles) {
+                    $this->userRoles = array('Default Access');
+                }
+            }
+            $this->isLoggedIn = 1;
+            $_SESSION['freepv'] = -1;
         } else {
-        $this->isLoggedIn = 0;
-	    if (!$allowAnonymous || isset($_GET['login'])) {
+            $this->isLoggedIn = 0;
+            if (!$allowAnonymous || isset($_GET['login'])) {
                 // Generate the code verifier and challenge
                 $this->oAuthChallenge();
                 // Generate a session key and store in cookie, then populate database
@@ -100,50 +102,57 @@ class modAuth {
                 $oAuthURL = 'https://login.microsoftonline.com/' . _OAUTH_TENANTID . '/oauth2/v2.0/' . 'authorize?response_type=code&client_id=' . _OAUTH_CLIENTID . '&redirect_uri=' . urlencode(_URL . '/oauth.php') . '&scope=' . _OAUTH_SCOPE . '&code_challenge=' . $this->oAuthChallenge . '&code_challenge_method=' . $this->oAuthChallengeMethod;
                 header('Location: ' . $oAuthURL);
                 exit;
-	    } else {
-            if(!isset($_SESSION['freepv'])) {
-                $_SESSION['grace'] = 5;
-                $_SESSION['freepv'] = $_SESSION['grace']+1;
-                $_SESSION['userpname'] = "未登录访客";
-                $_SESSION['playername'] = $_SERVER['HTTP_X_REAL_IP'];
+            } else {
+                if (!isset($_SESSION['freepv'])) {
+                    $_SESSION['grace'] = 5;
+                    $_SESSION['freepv'] = $_SESSION['grace'];
+                    $_SESSION['userpname'] = "未登录访客";
+                    $_SESSION['playername'] = $_SERVER['SERVER_ADDR'];
+                }
             }
         }
-        }
         //Clean up old entries
-	// The refresh token is valid for 72 hours by default, but there doesn't seem to be a way to see when the specific one issued expires. So assume anything 72 hours past the expiry of the access token is gone and delete.
-	$maxRefresh = strtotime('-72 hour');
+        // The refresh token is valid for 72 hours by default, but there doesn't seem to be a way to see when the specific one issued expires. So assume anything 72 hours past the expiry of the access token is gone and delete.
+        $maxRefresh = strtotime('-72 hour');
         $this->modDB->Query('DELETE FROM tblAuthSessions WHERE dtExpires < \'' . date('Y-m-d H:i:s', $maxRefresh) . '\'');
     }
 
-    function checkUserRole($role) {
-	// Check that the requested role has been assigned to the user
-	if (in_array($role, $this->userRoles)) {
-	    return 1;
-	}
-	return;
+    function checkUserRole($role)
+    {
+        // Check that the requested role has been assigned to the user
+        if (in_array($role, $this->userRoles)) {
+            return 1;
+        }
+        return;
     }
 
-    function uuid() {
+    function uuid()
+    {
         //uuid function is not my code, but unsure who the original author is. KN
         //uuid version 4
-        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
             // 16 bits for "time_mid"
-            mt_rand( 0, 0xffff ),
+            mt_rand(0, 0xffff),
             // 16 bits for "time_hi_and_version",
             // four most significant bits holds version number 4
-            mt_rand( 0, 0x0fff ) | 0x4000,
+            mt_rand(0, 0x0fff) | 0x4000,
             // 16 bits, 8 bits for "clk_seq_hi_res",
             // 8 bits for "clk_seq_low",
             // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand( 0, 0x3fff ) | 0x8000,
+            mt_rand(0, 0x3fff) | 0x8000,
             // 48 bits for "node"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
         );
     }
 
-    function oAuthChallenge() {
+    function oAuthChallenge()
+    {
         // Function to generate code verifier and code challenge for oAuth login. See RFC7636 for details. 
         $verifier = $this->oAuthVerifier;
         if (!$this->oAuthVerifier) {
@@ -162,4 +171,3 @@ class modAuth {
         $this->oAuthChallengeMethod = 'S256';
     }
 }
-?>

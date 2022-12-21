@@ -43,4 +43,3 @@ class modGraph {
                 return $response;
         }
 }
-?>

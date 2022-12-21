@@ -61,4 +61,6 @@
 		return str_replace(array("&#92;&#110;&#92;&#114;", "&#92;&#114;&#92;&#110;", "&#92;&#110;", "&#92;&#114;"), "<br />", mb_encode_numericentity (str_replace("playername", $_SESSION['playername'], $value), array (0x0, 0xffff, 0, 0xffff), 'UTF-8'));
 	}
 	
-?>
+	function simple_drm($value = null) { 
+		return '<span class="drm" data-txt="'.str_replace("<br />", '"></span><br /><span class="drm" data-txt="', $value).'"></span>';
+	}
