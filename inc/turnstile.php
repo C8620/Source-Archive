@@ -12,7 +12,7 @@ if (isset($_GET['cf-turnstile-response'])) {
     $response = curl_exec($verify);
     // var_dump($response);
     $responseData = json_decode($response);
-    if ($responseData->success && $responseData->hostname == "src.gcg.moe") {
+    if ($responseData->success && $responseData->hostname == "") {
         session_start();
         $_SESSION['Humanity'] = 14;
     }

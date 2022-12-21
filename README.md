@@ -4,9 +4,19 @@
  Unfortunately, for securaty reasons, we are unable to publish the current version serving on http://src.gcg.moe/, but the core elements remain the same.
 
 ## Requirements
- - PHP 7.0+
+ - PHP 8.0+
  - MySQL
  - A compactable library of contents (under `lib` folder)
+
+## Setting up
+There are several files needs to be changed before using this system.
+
+1. Fill database and MS Graph information in `/inc/_config.inc` and then rename it to `/config.inc`.
+2. Fill your turnstile secret and domain in `/inc/turnstile.php`.
+3. Fill the database containing your data index to `/inc/connect.php`
+
+## Database
+The database sample could be found in the SQL file. DO NOT UPLOAD THE SQL FILE TO YOUR WEBSITE.
  
 ## Content Format
  All contents stored here should end with `.txt.json`, this is to in comply with another tool developed to geenrate JSON files from acting script.
