@@ -1,5 +1,5 @@
 # Source Archive (OG)
- This repo contains source code of GCG.moe's Source Archive. This code is independently developed and was used at https://src.gcg.moe/. A modified version is currently running at https://gcgsrc.csdcdo.org/. You will need a HK/MO/TW/SG IP to visit the website or you will be barred by a 418 error.
+ This repo contains source code of GCG.moe's Source Archive. This code is independently developed and was used at https://src.gcg.moe/. A modified version is currently running at https://gcgsrc.csdcdo.org/ and https://script.gcg.moe/. You will need a HK/MO/TW/SG IP for the former and IP of any publishing area of Girl Cafe Gun for the latter to visit the website, or you will be barred by a 418 error.
  
  Unfortunately, for securaty reasons, we are unable to publish the current version serving on http://src.gcg.moe/, but the core elements remain the same.
 
