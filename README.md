@@ -1,5 +1,7 @@
 # Source Archive / Postscript Service
- This repo contains source code of GCG.moe's Source Archive. This code is independently developed and was used at https://src.gcg.moe/. A modified version is currently running at https://gcgsrc.csdcdo.org/ and https://script.gcg.moe/. You will need a HK/MO/TW/SG IP for the former and IP of any publishing area of Girl Cafe Gun for the latter to visit the website, or you will be barred by a 418 error.
+ This repo contains source code of GCG.moe's Source Archive. This code is independently developed and was used at https://src.gcg.moe/. A modified version was previously running at https://gcgsrc.csdcdo.org/ and https://script.gcg.moe/.
+
+ Code contained in this repo has been replaced since the refreshed version of postscript service was rolled out, which used more methods improve the codebase and to better efficiency.
  
  Unfortunately, for securaty reasons, we are unable to publish the current version serving on http://src.gcg.moe/, but the core elements remain the same.
 
@@ -7,6 +9,7 @@
  - PHP 8.0+
  - MySQL
  - A compactable library of contents (under `lib` folder)
+ - Microsoft Entra ID tenent with MS Graph capabilities.
 
 ## Setting up
 There are several files needs to be changed before using this system.
@@ -14,6 +17,8 @@ There are several files needs to be changed before using this system.
 1. Fill database and MS Graph information in `/inc/_config.inc` and then rename it to `/config.inc`.
 2. Fill your turnstile secret and domain in `/inc/turnstile.php`.
 3. Fill the database containing your data index to `/inc/connect.php`
+
+During the later development stages, it was discovered that there are places where URL was somehow hardcoded - please change them before using this for places elsewhere
 
 ## Database
 The database sample could be found in the SQL file. DO NOT UPLOAD THE SQL FILE TO YOUR WEBSITE.
