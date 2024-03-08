@@ -3,7 +3,7 @@
 
  Code contained in this repo has been replaced since the refreshed version of postscript service was rolled out, which used more methods improve the codebase and to better efficiency.
  
- Unfortunately, for securaty reasons, we are unable to publish the current version serving on http://src.gcg.moe/, but the core elements remain the same.
+ Unfortunately, for securaty reasons, we are unable to publish the current version serving on http://ps.gcg.moe/, but the core elements remain the same.
 
 ## Requirements
  - PHP 8.0+
