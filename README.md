@@ -22,9 +22,15 @@ During the later development stages, it was discovered that there are places whe
 
 ## Database
 The database sample could be found in the SQL file. DO NOT UPLOAD THE SQL FILE TO YOUR WEBSITE.
- 
+
+Entry function represents the relation between files, titles, and categories, while a category represents relation with its type - a type could be configured as like but is represented by string instead of numbers.
+
+For easy *direct* management and import, the way entries and categories connect it via two values, `type` and `typeid`, the pair of them should be unique. However, when using `category.php`, the passed parameter should be category's numerical id (PK).
+
 ## Content Format
- All contents stored here should end with `.txt.json`, this is to in comply with another tool developed to geenrate JSON files from acting script.
+ All contents stored here should end with `.txt.json`, this is to in comply with another tool developed to generate JSON files from acting script.
+
+ Note: The refreshed postscript service uses an extended structure, and requires all files to end with `.json`.
  
  A most simple example of file is as follows:
  
@@ -41,3 +47,5 @@ The database sample could be found in the SQL file. DO NOT UPLOAD THE SQL FILE T
   ]
 }
 ```
+
+Section 1 must exist, or the entry could not be properly loaded without section parameter. 
