@@ -1,9 +1,9 @@
 # Source Archive / Postscript Service
  This repo contains source code of GCG.moe's Source Archive. This code is independently developed and was used at https://src.gcg.moe/. A modified version was previously running at https://gcgsrc.csdcdo.org/ and https://script.gcg.moe/.
 
- Code contained in this repo has been replaced since the refreshed version of postscript service was rolled out, which used more methods improve the codebase and to better efficiency.
+ Code contained in this repo has later been replaced since the refreshed version of postscript service was rolled out, which used more methods improve the codebase and to better efficiency.
  
- Unfortunately, for securaty reasons, we are unable to publish the current version serving on http://ps.gcg.moe/, but the core elements remain the same.
+ I am updating this repo to include all the later improvements before the refreshed / unified postscript service was released.
 
 ## Requirements
  - PHP 8.0+
