@@ -51,14 +51,18 @@ to change them to fit your own purpose.
 The database sample could be found in the SQL file. DO NOT UPLOAD THE SQL FILE
 TO YOUR WEBSITE.
 
-Entry function represents the relation between files, titles, and categories,
-while a category represents relation with its type - a type could be configured
-as like but is represented by string instead of numbers.
+Overall structure for contents are three-layered, Type -> Category -> Entry.
+**Type** is a larger category of what contents it is, and contain a list of
+categories. Type is identified by a string. **Category** contain a list of
+entries.
 
-For easy _direct_ management and import, the way entries and categories connect
-it via two values, `type` and `typeid`, the pair of them should be unique.
-However, when using `category.php`, the passed parameter should be category's
-numerical id (PK).
+Due to historical reasons and easy management, link between category and entries
+are done by assigning each category with an additional number other than its ID,
+which is only unique within each type. Entries would have, therefore, a type and
+type-specific ID to link to its category.
+
+If a category / entry have common name of an indexing language missing, then
+that object would not show up when performing listing in that language.
 
 ## Content Format
 
