@@ -64,7 +64,7 @@ class modAuth
                     if ($reply->error) {
                         if (substr($reply->error_description, 0, 12) == 'AADSTS70008:') {
                             //refresh token expired
-                            $this->modDB->Update('tblAuthSessions', array('txtRedir' => $url, 'txtRefreshToken' => '', 'dtExpires' => date('Y-m-d H:i:s', strtotime('+5 minutes'))),  array('intAuthID' => $res['intAuthID']));
+                            $this->modDB->Update('tblAuthSessions', array('txtRedir' => $url, 'txtRefreshToken' => '', 'dtExpires' => date('Y-m-d H:i:s', strtotime('+5 minutes'))), array('intAuthID' => $res['intAuthID']));
                             $oAuthURL = 'https://login.microsoftonline.com/' . _OAUTH_TENANTID . '/oauth2/v2.0/' . 'authorize?response_type=code&client_id=' . _OAUTH_CLIENTID . '&redirect_uri=' . urlencode(_URL . '/oauth.php') . '&scope=' . _OAUTH_SCOPE . '&code_challenge=' . $this->oAuthChallenge . '&code_challenge_method=' . $this->oAuthChallengeMethod;
                             header('Location: ' . $oAuthURL);
                             exit;
@@ -89,6 +89,7 @@ class modAuth
             }
             $this->isLoggedIn = 1;
             $_SESSION['freepv'] = -1;
+
         } else {
             $this->isLoggedIn = 0;
             if (!$allowAnonymous || isset($_GET['login'])) {
@@ -104,10 +105,14 @@ class modAuth
                 exit;
             } else {
                 if (!isset($_SESSION['freepv'])) {
-                    $_SESSION['grace'] = 5;
+                    $_SESSION['grace'] = _GRACE_PERIOD;
                     $_SESSION['freepv'] = $_SESSION['grace'];
-                    $_SESSION['userpname'] = "未登录访客";
-                    $_SESSION['playername'] = $_SERVER['SERVER_ADDR'];
+                    $_SESSION['userpname'] = $_SERVER['REMOTE_ADDR'];
+                    $_SESSION['voice'] = false;
+                    $_SESSION['admin'] = false;
+                    $_SESSION['uid'] = session_id();
+                    require_once "../inc/randomNames.php";
+                    $_SESSION['playername'] = getRandomName($_SESSION['LANG_CONTENT']);
                 }
             }
         }

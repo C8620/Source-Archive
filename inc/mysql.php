@@ -121,4 +121,27 @@ class modDB {
     public function Error() {
         return mysqli_error($this->myDB);
     }
+
+    public function FindMultipleAnd ($table, $conditionArray) {
+        $query = 'SELECT * FROM `' . $table . '` WHERE ';
+        $intCount = 0;
+        foreach ($conditionArray as $fieldName => $fieldValue) {
+            if ($intCount > 0) $query .= ' AND ';
+            $query .= '`' . $fieldName . '` = \'' . mysqli_real_escape_string($this->myDB, $fieldValue) . '\'';
+            $intCount++;
+        }
+        return $this->QueryArray($query);
+    }
+
+    public function FindSingleAnd ($table, $conditionArray) {
+        $query = 'SELECT * FROM `' . $table . '` WHERE ';
+        $intCount = 0;
+        foreach ($conditionArray as $fieldName => $fieldValue) {
+            if ($intCount > 0) $query .= ' AND ';
+            $query .= '`' . $fieldName . '` = \'' . mysqli_real_escape_string($this->myDB, $fieldValue) . '\'';
+            $intCount++;
+        }
+        return $this->QuerySingle($query);
+    }
 }
+?>
