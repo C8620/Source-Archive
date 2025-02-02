@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ERROR);
+ini_set('display_errors', '1');
 /* oauth.php Azure AD oAuth web callback script
  *
  * Katy Nicholson, last updated 17/11/2021
@@ -40,10 +42,23 @@ if ($sessionData) {
 	}
 
 	$idToken = base64_decode(explode('.', $reply->id_token)[1]);
+	// $idToken should be a JSON object. If it's not, something has gone wrong. Verify by try catch.
+	try {
+		$idToken = json_decode($idToken);
+		// For storage, we need to convert the object back to a string, but encode it to prevent UTF-8 issues.
+		$idToken = json_encode($idToken, JSON_UNESCAPED_UNICODE);
+	} catch (Exception $e) {
+		echo $oAuth->errorMessage('Token provided is not valid JSON.');
+		exit;
+	}
 	$modDB->Update('tblAuthSessions', array('txtToken' => $reply->access_token, 'txtRefreshToken' => $reply->refresh_token, 'txtIDToken' => $idToken, 'txtRedir' => '', 'dtExpires' => date('Y-m-d H:i:s', strtotime('+' . $reply->expires_in . ' seconds'))), array('intAuthID' => $sessionData['intAuthID']));
 	$_SESSION['just_logon'] = true;
 	// Redirect user back to where they came from.
-	header('Location: ' . $sessionData['txtRedir']);
+	if ($sessionData['txtRedir']){
+		header('Location: ' . $sessionData['txtRedir']);
+	} else {
+		header('Location: /');
+	}
 } else {
 	header('Location: /');
 }

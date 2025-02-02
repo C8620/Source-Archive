@@ -36,7 +36,7 @@ define('_IPDATA_PROXY_ENDPOINT', ''); // With end slash
 // System settings
 define('_GRACE_PERIOD', 0); // Grace period in pages
 define('_WHITELIST_ENABLED', false); // Allow access only to accounts
-define('_SOFTWARE_VERSION', 'V5.1.0 OSS (20250201)');
+define('_SOFTWARE_VERSION', 'V5.1.1 OSS (20250202)');
 define('_DATA_VERSION', '');
 define('_WRITE_LOGS', true);
 

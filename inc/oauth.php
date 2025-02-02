@@ -12,6 +12,23 @@
 class modOAuth {
 
 	function errorMessage($message) {
+                // Detect 54005 already reedemed error
+                if (strpos($message, 'AADSTS54005') !== false) {
+                        // Human-readable message in EN, ZH, JA, KR.
+                        $message = 'Stale request. You may have refreshed this 
+                        page or clicked the back button. Re-visit the homepage 
+                        to try again.</br>\n <a href="/">Return to homepage</a>
+                        <br />\n
+                        过期的请求。您可能刷新了此页面或单击了返回按钮。请重新访问主页以重试。
+                        </br>\n <a href="/">返回主页</a><br />\n
+                        期限切れのリクエスト。このページを更新したか、戻るボタンをクリックし
+                        ました。もう一度ホームページを訪れてやり直してください。</br>\n 
+                        <a href="/">ホームページに戻る</a><br />\n
+                        만료된 요청입니다. 이 페이지를 새로 고침하거나 뒤로 버튼을 클릭했을
+                        수 있습니다. 다시 홈페이지를 방문하여 다시 시도하십시오.</br>\n
+                        <a href="/">홈페이지로 돌아가기</a>';
+                }
+
 		return	'<!DOCTYPE html>
                         <html lang="en">
                         <head>
